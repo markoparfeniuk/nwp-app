@@ -3,6 +3,7 @@ import numpy as np
 import tensorflow as tf
 import pickle
 import spacy
+import en_core_web_sm
 from tensorflow.keras.models import load_model
 from tensorflow.keras.preprocessing.sequence import pad_sequences
 from flask import Flask, request, jsonify
@@ -35,7 +36,7 @@ def predict_next_words(text, n=3):
     return top_words
 
 # Load spaCy's English language model
-nlp = spacy.load("en_core_web_sm")
+nlp = en_core_web_sm.load()
 
 # MongoDB connection URI
 mongo_uri = os.getenv('MONGODB_URI') # Replace with your actual MongoDB URI
