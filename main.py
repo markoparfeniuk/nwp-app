@@ -52,11 +52,16 @@ def get_vocabulary_from_mongodb():
     return vocabulary
 
 def find_synonyms(word, vocab, threshold=0.9):
-    word = nlp(word)
+    word_doc = nlp(word)
+    # Check if the input word is an article/determiner; if so, return empty list
+    if word_doc[0].tag_ == 'DT' or word_doc[0].tag_ == 'PRP':
+        print(word)
+        return []
     synonyms = []
     for v_word in vocab:
-        v_word_spacy = nlp(v_word)
-        if word.similarity(v_word_spacy) > threshold:
+        v_word_doc = nlp(v_word)
+        # Skip vocabulary words that are articles/determiners
+        if (v_word_doc[0].tag_ != 'DT' or v_word_doc[0].tag_ != 'PRP') and word_doc.similarity(v_word_doc) > threshold:
             synonyms.append(v_word)
     return synonyms
 
