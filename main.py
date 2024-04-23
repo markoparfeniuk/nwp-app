@@ -83,6 +83,25 @@ def handle_prediction(predict_function, text, num_words):
     except Exception as e:
         return jsonify({'error': str(e)})
 
+def add_word_to_vocabulary(word):
+    # Check if the word already exists in the vocabulary collection
+    existing_word = collection.find_one({'word': word})
+    if not existing_word:
+        # Insert a new document for the word
+        collection.insert_one({'word': word})
+        return jsonify({'message': f'Word "{word}" added to the vocabulary.'}), 200
+    else:
+        return jsonify({'error': f'Word "{word}" already exists in the vocabulary.'}), 400
+
+def remove_word_from_vocabulary(word):
+    # Remove the word from the vocabulary collection
+    result = collection.delete_one({'word': word})
+    if result.deleted_count > 0:
+        return jsonify({'message': f'Word "{word}" removed from the vocabulary.'}), 200
+    else:
+        return jsonify({'error': f'Word "{word}" not found in the vocabulary.'}), 404
+
+
 app = Flask(__name__)
 
 @app.route('/predict', methods=['GET'])
@@ -98,6 +117,18 @@ def predict_synonyms():
     text = data['text']
     num_words = data.get('num_words', 3)
     return handle_prediction(predict_next_words_with_synonyms, text, num_words)
+
+@app.route('/add-word', methods=['POST'])
+def add_word():
+    data = request.json
+    word = data['word']
+    return add_word_to_vocabulary(word)
+
+@app.route('/delete-word', methods=['DELETE'])
+def delete_word():
+    data = request.json
+    word = data['word']
+    return remove_word_from_vocabulary(word)
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=int(os.environ.get('PORT', 8080)))
