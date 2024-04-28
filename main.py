@@ -19,7 +19,7 @@ def predict():
     text = data['text']
     num_words = data.get('num_words', 3)
     try:
-        predictions = predictWordsService.handle_prediction(predictWordsService.predict_next_words(user_id, text, num_words))
+        predictions = predictWordsService.predict_next_words(user_id, text, num_words)
         return jsonify({'predictions': predictions})
     except Exception as e:
         return jsonify({'error': str(e)})
