@@ -18,7 +18,7 @@ class PredictWordsService:
 
 
     def get_user_vocabulary(self, user_id):
-        result = self.mongoClient.get_user_vocabulary()
+        result = self.mongoClient.get_user_vocabulary(user_id)
 
         filtered_result = [item['word'] for item in result if not item.get('is_word_learnt', False)]
 
