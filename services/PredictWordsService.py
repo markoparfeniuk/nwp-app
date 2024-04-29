@@ -11,9 +11,9 @@ from tensorflow.keras.preprocessing.sequence import pad_sequences
 class PredictWordsService:
     def __init__(self):
         self.mongoClient = MongoDbClient()
-        self.langModel = load_model('../saved_models/next_word_model.h5')
+        self.langModel = load_model('/home/site/wwwroot/saved_models/next_word_model.h5')
         self.nlp = en_core_web_lg.load()
-        with open('../tokenizer.pickle', 'rb') as handle:
+        with open('/home/site/wwwroot/tokenizer.pickle', 'rb') as handle:
             self.tokenizer = pickle.load(handle)
 
 
