@@ -5,8 +5,8 @@ from pymongo import MongoClient
 class MongoDbClient:
     def __init__(self):
         connection_string = os.getenv('MONGODB_URI')
-        db_name = 'word_app'
-        main_vocabulary_collection_name = 'vocabulary'
+        db_name = 'word_app_db'
+        main_vocabulary_collection_name = 'main_vocabulary'
         users_vocabulary_collection_name = 'users_vocabulary'
         self.client = MongoClient(connection_string)
         self.db = self.client[db_name]
