@@ -1,5 +1,6 @@
 import os
 from pymongo import MongoClient
+from datetime import datetime
 
 
 class MongoDbClient:
@@ -27,6 +28,14 @@ class MongoDbClient:
         result = self.users_vocabulary_collection.find_one({'_user_id': user_id})
 
         return result.get('vocabulary', []) if result else []
+
+    def get_user_level(self, user_id):
+        user_doc = self.users_vocabulary_collection.find_one({'_user_id': user_id})
+
+        if user_doc:
+            return user_doc.get('level', None)
+        else:
+            return None
 
     def get_user_learning_vocabulary(self, user_id):
         pipeline = [
@@ -61,3 +70,59 @@ class MongoDbClient:
 
     def add_word_to_user_vocabulary(self, row, user_id):
         self.users_vocabulary_collection.update_one({"_user_id": user_id}, {"$push": {"vocabulary": row}}, upsert=True)
+
+    def set_user_level(self, user_id, level):
+        doc = self.users_vocabulary_collection.find_one({"_user_id": user_id})
+        if doc:
+            self.users_vocabulary_collection.update_one({"_id": doc["_id"]}, {"$set": {"level": level}})
+        else:
+            new_document = {"_user_id": user_id, "level": level}
+            self.users_vocabulary_collection.insert_one(new_document)
+
+    def add_words_array_to_user_vocabulary(self, user_id, words):
+        result = self.users_vocabulary_collection.update_one(
+            {"_user_id": user_id}, {"$push": {"vocabulary": {"$each": words}}})
+
+        if result.modified_count > 0:
+            return True
+        else:
+            return False
+
+    def get_words_by_level(self, level):
+        result = self.main_vocabulary_collection.find({"level": level})
+
+        return result
+
+    def update_user_vocabulary_word(self, user_id, word, repetition_result, is_word_learnt):
+        new_time_seen = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+
+        filter_criteria = {
+            "_user_id": user_id,
+            "vocabulary.word": word
+        }
+
+        update_operation = {
+            "$set": {
+                "vocabulary.$.time_seen": new_time_seen,
+                "vocabulary.$.is_word_learnt": is_word_learnt
+            },
+            "$inc": {
+                "vocabulary.$.history_seen": 1,
+                "vocabulary.$.history_correct": int(repetition_result)
+            }
+        }
+
+        update_result = self.users_vocabulary_collection.find_one_and_update(
+            filter_criteria,
+            update_operation,
+        )
+
+        if update_result is not None:
+            return True
+        else:
+            return False
+
+    def get_user_vocabulary_word(self, user_id, word):
+        result = self.users_vocabulary_collection.find_one({"_user_id": user_id, "vocabulary.word": word})
+
+        return result

@@ -5,7 +5,7 @@ import joblib
 
 
 saved_model_name = "./saved_models/scaler_params.pkl"
-saved_scaler_name = "./saved_models/model_params.pkl"
+saved_scaler_name = "./saved_models/log_model_params.pkl"
 
 
 class LogWordModel:

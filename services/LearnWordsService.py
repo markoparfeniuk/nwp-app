@@ -1,10 +1,10 @@
 import numpy as np
 
-from constants import SECONDS_IN_DAY
+from constants import SECONDS_IN_DAY, MIN_DELTA_TIME, LEVEL_ORDER, HISTORY_CORRECT_THRESHOLD
 from dbClient.MongoDbClient import MongoDbClient
 from models.logWordModel import LogWordModel
 
-from datetime import datetime
+from datetime import datetime, timedelta
 
 
 class LearnWordsService:
@@ -20,14 +20,14 @@ class LearnWordsService:
     def get_user_vocabulary(self, user_id):
         result = self.mongoClient.get_user_vocabulary(user_id)
 
-        filtered_result = [item for item in result if not item.get('is_word_learnt', False)]
-
-        return filtered_result
+        return result
 
     def get_user_learning_vocabulary(self, user_id):
         result = self.mongoClient.get_user_learning_vocabulary(user_id)
 
-        return result
+        filtered_result = [item for item in result if not item.get('is_word_learnt', False)]
+
+        return filtered_result
 
     def prepare_words_for_log_model(self, words_list):
         current_time = datetime.now()
@@ -63,6 +63,8 @@ class LearnWordsService:
 
             })
 
+            result_array = [item for item in result_array if item["feature"][0] >= MIN_DELTA_TIME]
+
         return result_array
 
     def get_words_to_learn(self, words_array):
@@ -78,11 +80,75 @@ class LearnWordsService:
 
         return filtered_words_array
 
+    def check_if_word_exists_in_user_vocabulary(self, word, user_id):
+        result = self.mongoClient.check_if_word_exists_in_user_vocabulary(word, user_id)
+
+        return result
+
     def save_word_to_user_vocabulary(self, row, user_id):
-        word_exists = self.mongoClient.check_if_word_exists_in_user_vocabulary(row['word'], user_id)
+        word_exists = self.check_if_word_exists_in_user_vocabulary(row['word'], user_id)
 
         if not word_exists:
             self.mongoClient.add_word_to_user_vocabulary(row, user_id)
             return True
         else:
             return False
+
+    def get_word_definition(self, word):
+        word_doc = self.mongoClient.get_main_word(word)
+
+        if word_doc and "Definitions" in word_doc:
+            return word_doc["Definitions"]
+        else:
+            return None
+
+    def add_words_to_user_vocabulary(self, user_id, words):
+        words_to_add = [{"word": word["Word"], "is_word_learnt": True} for word in words]
+        self.mongoClient.add_words_array_to_user_vocabulary(user_id, words_to_add)
+
+    def get_words_by_level(self, level):
+        result = self.mongoClient.get_words_by_level(level)
+
+        return result
+
+    def set_user_level(self, user_id, level):
+        self.mongoClient.set_user_level(user_id, level)
+
+        user_level_index = LEVEL_ORDER.index(level)
+
+        for i in range(user_level_index):
+            current_level = LEVEL_ORDER[i]
+            words_for_current_level = self.get_words_by_level(current_level)
+            self.add_words_to_user_vocabulary(user_id, words_for_current_level)
+
+    def get_user_level(self, user_id):
+        result = self.mongoClient.get_user_level(user_id)
+
+        return result
+
+    def handle_repetition_result(self, user_id, word, repetition_result):
+        is_word_learnt = False
+        successful_result = False
+
+        user_vocabulary = self.mongoClient.get_user_learning_vocabulary(user_id)
+
+        if user_vocabulary:
+            user_word = None
+            for entry in user_vocabulary:
+                if entry['word'] == word:
+                    user_word = entry
+                    break
+
+            if user_word:
+                history_correct = user_word.get('history_correct', 0)
+                time_seen = user_word.get('time_seen')
+                time_seen_datetime = datetime.strptime(time_seen, "%Y-%m-%d %H:%M:%S")
+
+                if (repetition_result and (history_correct > (HISTORY_CORRECT_THRESHOLD - 1))
+                        and (datetime.now() - time_seen_datetime > timedelta(days=HISTORY_CORRECT_THRESHOLD))):
+                    is_word_learnt = True
+
+                successful_result = self.mongoClient.update_user_vocabulary_word(user_id, word, repetition_result,
+                                                                                 is_word_learnt)
+
+        return successful_result
