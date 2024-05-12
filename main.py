@@ -174,7 +174,7 @@ def get_user_vocabulary():
 
     try:
         user_vocabulary = predictWordsService.get_user_vocabulary(user_id)
-        result = [{entry['word'], entry['is_word_learnt']} for entry in user_vocabulary]
+        result = [{'word': entry['word'], 'is_word_learnt': entry['is_word_learnt']} for entry in user_vocabulary]
         return result
     except Exception as e:
         return jsonify({'error': str(e)})
