@@ -173,7 +173,7 @@ def get_user_vocabulary():
 
     user_vocabulary = learnWordsService.get_user_vocabulary(user_id)
 
-    result = [entry['word'] for entry in user_vocabulary]
+    result = [{entry['word'], entry['is_word_learnt']} for entry in user_vocabulary]
 
     response = {'user_vocabulary': result}
 
