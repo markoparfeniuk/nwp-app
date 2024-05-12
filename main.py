@@ -16,7 +16,7 @@ app = Flask(__name__)
 CORS(app)
 
 
-@app.route('/predict', methods=['GET'])
+@app.route('/predict', methods=['POST'])
 def predict():
     data = request.json
     text = data['text']
@@ -28,7 +28,7 @@ def predict():
         return jsonify({'error': str(e)})
 
 
-@app.route('/predict-synonyms', methods=['GET'])
+@app.route('/predict-synonyms', methods=['POST'])
 def predict_synonyms():
     data = request.json
     user_id = data['user_id']
