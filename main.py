@@ -167,9 +167,10 @@ def set_word_as_known():
         return jsonify({"error": f"Word '{new_row['word']}' already exists in user vocabulary."}), 404
 
 
-@app.route('/get_user_vocabulary', methods=['GET'])
+@app.route('/get_user_vocabulary', methods=['POST'])
 def get_user_vocabulary():
-    user_id = request.args.get('user_id')
+    data = request.json
+    user_id = data['user_id']
 
     user_vocabulary = learnWordsService.get_user_vocabulary(user_id)
 
