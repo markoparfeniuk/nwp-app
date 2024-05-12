@@ -15,6 +15,7 @@ predictWordsService = PredictWordsService()
 app = Flask(__name__)
 CORS(app)
 
+
 @app.route('/predict', methods=['GET'])
 def predict():
     data = request.json
