@@ -14,7 +14,7 @@ predictWordsService = PredictWordsService()
 app = Flask(__name__)
 
 
-@app.route('/predict', methods=['POST'])
+@app.route('/predict', methods=['GET'])
 def predict():
     data = request.json
     text = data['text']
@@ -26,7 +26,7 @@ def predict():
         return jsonify({'error': str(e)})
 
 
-@app.route('/predict-synonyms', methods=['POST'])
+@app.route('/predict-synonyms', methods=['GET'])
 def predict_synonyms():
     data = request.json
     user_id = data['user_id']
