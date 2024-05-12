@@ -16,12 +16,17 @@ class PredictWordsService:
         with open('/home/site/wwwroot/tokenizer.pickle', 'rb') as handle:
             self.tokenizer = pickle.load(handle)
 
-    def get_user_vocabulary(self, user_id):
+    def get_user_learning_vocabulary(self, user_id):
         result = self.mongoClient.get_user_vocabulary(user_id)
 
         filtered_result = [item['word'] for item in result if not item.get('is_word_learnt', False)]
 
         return filtered_result
+
+    def get_user_vocabulary(self, user_id):
+        result = self.mongoClient.get_user_vocabulary(user_id)
+
+        return result
 
     def predict_next_words(self, text, n=3):
         sequence = self.tokenizer.texts_to_sequences([text])[0]
@@ -51,7 +56,7 @@ class PredictWordsService:
         return synonyms
 
     def predict_next_words_with_synonyms(self, user_id, text, n=3, threshold=0.55):
-        vocabulary = self.get_user_vocabulary(user_id)
+        vocabulary = self.get_user_learning_vocabulary(user_id)
         top_words = self.predict_next_words(text, n)
         synonyms_in_vocab = {}
 

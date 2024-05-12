@@ -172,13 +172,12 @@ def get_user_vocabulary():
     data = request.json
     user_id = data['user_id']
 
-    user_vocabulary = learnWordsService.get_user_vocabulary(user_id)
-
-    result = [{entry['word'], entry['is_word_learnt']} for entry in user_vocabulary]
-
-    response = {'user_vocabulary': result}
-
-    return jsonify(response), 200
+    try:
+        user_vocabulary = predictWordsService.get_user_learning_vocabulary(user_id)
+        result = [{entry['word'], entry['is_word_learnt']} for entry in user_vocabulary]
+        return result
+    except Exception as e:
+        return jsonify({'error': str(e)})
 
 
 if __name__ == '__main__':
