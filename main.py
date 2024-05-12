@@ -39,6 +39,17 @@ def predict_synonyms():
         return jsonify({'error': str(e)})
 
 
+@app.route('/get-user-vocabulary', methods=['GET'])
+def predict():
+    data = request.json
+    user_id = data['user_id']
+    try:
+        vocabulary = learnWordsService.get_user_vocabulary(user_id)
+        return jsonify(vocabulary)
+    except Exception as e:
+        return jsonify({'error': str(e)})
+
+
 @app.route('/set_user_level', methods=['POST'])
 def set_level():
     request_data = request.get_json()
