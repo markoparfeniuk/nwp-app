@@ -16,7 +16,7 @@ app = Flask(__name__)
 CORS(app)
 
 
-@app.route('/predict', methods=['GET'])
+@app.route('/predict', methods=['POST'])
 def predict():
     data = request.json
     text = data['text']
@@ -28,7 +28,7 @@ def predict():
         return jsonify({'error': str(e)})
 
 
-@app.route('/predict-synonyms', methods=['GET'])
+@app.route('/predict-synonyms', methods=['POST'])
 def predict_synonyms():
     data = request.json
     user_id = data['user_id']
@@ -167,17 +167,17 @@ def set_word_as_known():
         return jsonify({"error": f"Word '{new_row['word']}' already exists in user vocabulary."}), 404
 
 
-@app.route('/get_user_vocabulary', methods=['GET'])
+@app.route('/get_user_vocabulary', methods=['POST'])
 def get_user_vocabulary():
-    user_id = request.args.get('user_id')
+    data = request.json
+    user_id = data['user_id']
 
-    user_vocabulary = learnWordsService.get_user_vocabulary(user_id)
-
-    result = [entry['word'] for entry in user_vocabulary]
-
-    response = {'user_vocabulary': result}
-
-    return jsonify(response), 200
+    try:
+        user_vocabulary = predictWordsService.get_user_vocabulary(user_id)
+        result = [{'word': entry['word'], 'is_word_learnt': entry['is_word_learnt']} for entry in user_vocabulary]
+        return result
+    except Exception as e:
+        return jsonify({'error': str(e)})
 
 
 if __name__ == '__main__':
