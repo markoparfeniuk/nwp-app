@@ -105,17 +105,17 @@ def get_words_to_relearn():
     user_vocabulary = learnWordsService.get_user_learning_vocabulary(user_id)
 
     if not user_vocabulary:
-        return jsonify({'error': 'User has no words to relearn'}), 404
+        return jsonify({'massage': 'User has no words to relearn'}), 200
 
     words_for_log_model = learnWordsService.prepare_words_for_log_model(user_vocabulary)
 
     if len(words_for_log_model) < 1:
-        return jsonify({'error': 'User has no words to relearn'}), 404
+        return jsonify({'massage': 'User has no words to relearn'}), 200
 
     words_to_learn = learnWordsService.get_words_to_learn(words_for_log_model)
 
     if not words_to_learn:
-        return jsonify({'error': 'User has no words to relearn. All words have high probability'}), 404
+        return jsonify({'massage': 'User has no words to relearn. All words have high probability'}), 200
 
     sorted_data = sorted(words_to_learn, key=lambda x: x['probability'], reverse=False)
 
