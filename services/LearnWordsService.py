@@ -102,6 +102,14 @@ class LearnWordsService:
         else:
             return None
 
+    def get_word_level(self, word):
+        word_doc = self.mongoClient.get_main_word(word)
+
+        if word_doc and "level" in word_doc:
+            return word_doc["level"]
+        else:
+            return None
+
     def add_words_to_user_vocabulary(self, user_id, words):
         words_to_add = [{"word": word["Word"], "is_word_learnt": True} for word in words]
         self.mongoClient.add_words_array_to_user_vocabulary(user_id, words_to_add)

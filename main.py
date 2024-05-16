@@ -72,7 +72,8 @@ def get_new_word_to_learn():
 
         if not word_exists:
             definition = learnWordsService.get_word_definition(random_word)
-            return jsonify({"word": random_word, "definition": definition}), 200
+            level = learnWordsService.get_word_level(random_word)
+            return jsonify({"word": random_word, "definition": definition, "level": level}), 200
         else:
             return jsonify({"error": f"Word '{random_word}' already exists in user vocabulary."}), 404
     else:
