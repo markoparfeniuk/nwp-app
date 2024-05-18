@@ -198,5 +198,26 @@ def increment_history_seen():
         return jsonify({"error": str(e)}), 500
 
 
+@app.route('/update_word_status', methods=['POST'])
+def update_word_status():
+    request_data = request.get_json()
+    user_id = request_data.get('user_id')
+    word = request_data.get('word')
+
+    user_vocabulary = learnWordsService.get_user_vocabulary(user_id)
+    word_entry = next((entry for entry in user_vocabulary if entry['word'] == word), None)
+
+    if word_entry:
+        new_status = not word_entry['is_word_learnt']
+        update_result = learnWordsService.update_word_status(user_id, word, new_status)
+
+        if update_result:
+            return jsonify({'message': f"Word '{word}' status updated successfully", 'is_word_learnt': new_status}), 200
+        else:
+            return jsonify({'error': 'Failed to update word status'}), 500
+    else:
+        return jsonify({'error': 'Word not found in user vocabulary'}), 404
+
+
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=int(os.environ.get('PORT', 8080)))

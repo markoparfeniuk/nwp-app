@@ -142,3 +142,9 @@ class MongoDbClient:
             return -1
 
         return 0
+
+    def update_one(self, filter, update):
+        try:
+            self.db.user_vocabulary.update_one(filter, update)
+        except Exception as e:
+            print(f"Error updating document: {e}")
