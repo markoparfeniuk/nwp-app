@@ -160,3 +160,8 @@ class LearnWordsService:
                                                                                  is_word_learnt)
 
         return successful_result
+
+    def increment_word_history_seen(self, user_id, word):
+        result = self.mongoClient.increment_word_history_seen(user_id, word)
+
+        return result

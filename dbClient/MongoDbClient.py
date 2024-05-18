@@ -126,3 +126,19 @@ class MongoDbClient:
         result = self.users_vocabulary_collection.find_one({"_user_id": user_id, "vocabulary.word": word})
 
         return result
+
+    def increment_word_history_seen(self, user_id, word):
+        result = self.users_vocabulary_collection.update_one(
+            {
+                '_user_id': user_id,
+                'vocabulary.word': word
+            },
+            {
+                '$inc': {'vocabulary.$.history_seen': 1}
+            }
+        )
+
+        if result.matched_count == 0:
+            return -1
+
+        return 0

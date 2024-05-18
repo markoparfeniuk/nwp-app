@@ -181,5 +181,22 @@ def get_user_vocabulary():
         return jsonify({'error': str(e)})
 
 
+@app.route('/increment_history_seen', methods=['POST'])
+def increment_history_seen():
+    data = request.json
+    user_id = data['user_id']
+    word = data['word']
+
+    try:
+        result = learnWordsService.increment_word_history_seen(user_id, word)
+
+        if result == -1:
+            return jsonify({"error": "No matching word found"}), 404
+
+        return jsonify({"message": "history_seen incremented successfully"}), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=int(os.environ.get('PORT', 8080)))
