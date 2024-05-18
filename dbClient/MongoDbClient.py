@@ -139,9 +139,9 @@ class MongoDbClient:
         )
 
         if result.matched_count == 0:
-            return -1
+            return 0
 
-        return 0
+        return 1
 
     def update_word_status(self, user_id, word, new_status):
         result = self.users_vocabulary_collection.update_one(
@@ -155,6 +155,6 @@ class MongoDbClient:
         )
 
         if result.matched_count == 0:
-            return -1
+            return 0
 
-        return 0
+        return 1
