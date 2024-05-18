@@ -212,11 +212,11 @@ def update_word_status():
         update_result = learnWordsService.update_word_status(user_id, word, new_status)
 
         if update_result:
-            return jsonify({'message': f"Word '{word}' status updated successfully", 'is_word_learnt': new_status}), 200
+            return jsonify({'message': f"Word '{word}' status updated successfully", 'is_word_learnt': new_status})
         else:
-            return jsonify({'error': 'Failed to update word status'}), 500
+            return jsonify({'error': 'Failed to update word status'})
     else:
-        return jsonify({'error': 'Word not found in user vocabulary'}), 404
+        return jsonify({'error': 'Word not found in user vocabulary'})
 
 
 if __name__ == '__main__':
