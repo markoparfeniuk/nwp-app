@@ -143,8 +143,18 @@ class MongoDbClient:
 
         return 0
 
-    def update_one(self, filter, update):
-        try:
-            self.db.user_vocabulary.update_one(filter, update)
-        except Exception as e:
-            print(f"Error updating document: {e}")
+    def update_word_status(self, user_id, word, new_status):
+        result = self.users_vocabulary_collection.update_one(
+            {
+                '_user_id': user_id,
+                'vocabulary.word': word
+            },
+            {
+                '$set': {'vocabulary.$.is_word_learnt': new_status}
+            }
+        )
+
+        if result.matched_count == 0:
+            return -1
+
+        return 0

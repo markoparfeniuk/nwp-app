@@ -167,12 +167,6 @@ class LearnWordsService:
         return result
 
     def update_word_status(self, user_id, word, new_status):
-        try:
-            self.mongoClient.update_one(
-                {'_user_id': user_id, 'word': word},
-                {'$set': {'is_word_learnt': new_status}}
-            )
-            return True
-        except Exception as e:
-            print(f"Error updating word status: {e}")
-            return False
+        result = self.mongoClient.update_word_status(user_id, word, new_status)
+
+        return result
