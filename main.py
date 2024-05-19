@@ -196,7 +196,7 @@ def increment_history_seen():
         return jsonify({"error": str(e)}), 500
 
 
-@app.route('/update_word_status', methods=['POST'])
+@app.route('/update_word_status', methods=['PUT'])
 def update_word_status():
     request_data = request.get_json()
     user_id = request_data.get('user_id')
