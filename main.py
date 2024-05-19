@@ -198,9 +198,9 @@ def increment_history_seen():
 
 @app.route('/update_word_status', methods=['PUT'])
 def update_word_status():
-    request_data = request.get_json()
-    user_id = request_data.get('user_id')
-    word = request_data.get('word')
+    data = request.json()
+    user_id = data['user_id']
+    word = data['word']
 
     user_vocabulary = learnWordsService.get_user_vocabulary(user_id)
     word_entry = next((entry for entry in user_vocabulary if entry['word'] == word), None)
