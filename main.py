@@ -188,7 +188,7 @@ def increment_history_seen():
     try:
         result = learnWordsService.increment_word_history_seen(user_id, word)
 
-        if result == -1:
+        if result == 0:
             return jsonify({"error": "No matching word found"}), 404
 
         return jsonify({"message": "history_seen incremented successfully"}), 200
@@ -198,7 +198,7 @@ def increment_history_seen():
 
 @app.route('/update_word_status', methods=['PUT'])
 def update_word_status():
-    data = request.json()
+    data = request.json
     user_id = data['user_id']
     word = data['word']
 
