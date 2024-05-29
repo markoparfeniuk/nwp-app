@@ -1,5 +1,4 @@
 import os
-import tempfile
 import numpy as np
 import pickle
 import en_core_web_lg
@@ -13,16 +12,8 @@ from tensorflow.keras.preprocessing.sequence import pad_sequences
 class PredictWordsService:
     def __init__(self):
         self.mongoClient = MongoDbClient()
-        home_dir = tempfile.gettempdir()
-        subfolder = None
-        for item in os.listdir(base_dir):
-            item_path = os.path.join(base_dir, item)
-            if os.path.isdir(item_path):
-                subfolder = item_path
-                break
-        if subfolder is None:
-            raise FileNotFoundError("No subfolder found in the temporary directory")
-        model_path = os.path.join(subfolder, 'saved_models', 'next_word_model.h5')
+        home_dir = os.environ.get('HOME', '/home/site/wwwroot')
+        model_path = os.path.join(home_dir, 'saved_models', 'next_word_model.h5')
         self.langModel = load_model(model_path)
         self.nlp = en_core_web_lg.load()
         tokenizer_path = os.path.join(home_dir, 'tokenizer.pickle')
