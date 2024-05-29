@@ -13,6 +13,8 @@ class PredictWordsService:
     def __init__(self):
         self.mongoClient = MongoDbClient()
         home_dir = os.environ.get('HOME', '/home/site/wwwroot')
+        if 'TMP' in os.environ:
+            home_dir = os.environ['TMP']
         model_path = os.path.join(home_dir, 'saved_models', 'next_word_model.h5')
         self.langModel = load_model(model_path)
         self.nlp = en_core_web_lg.load()
