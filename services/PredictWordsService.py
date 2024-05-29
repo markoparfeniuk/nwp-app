@@ -12,12 +12,9 @@ from tensorflow.keras.preprocessing.sequence import pad_sequences
 class PredictWordsService:
     def __init__(self):
         self.mongoClient = MongoDbClient()
-        home_dir = os.environ.get('HOME', '/home/site/wwwroot')
-        model_path = os.path.join(home_dir, 'saved_models', 'next_word_model.h5')
-        self.langModel = load_model(model_path)
+        self.langModel = load_model('/home/site/wwwroot/saved_models/next_word_model.h5')
         self.nlp = en_core_web_lg.load()
-        tokenizer_path = os.path.join(home_dir, 'tokenizer.pickle')
-        with open(tokenizer_path, 'rb') as handle:
+        with open('/home/site/wwwroot/tokenizer.pickle', 'rb') as handle:
             self.tokenizer = pickle.load(handle)
 
     def get_user_learning_vocabulary(self, user_id):
