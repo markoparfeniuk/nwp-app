@@ -1,4 +1,4 @@
-import os
+import tempfile
 import numpy as np
 import pickle
 import en_core_web_lg
@@ -12,9 +12,7 @@ from tensorflow.keras.preprocessing.sequence import pad_sequences
 class PredictWordsService:
     def __init__(self):
         self.mongoClient = MongoDbClient()
-        home_dir = os.environ.get('HOME', '/home/site/wwwroot')
-        if 'TMP' in os.environ:
-            home_dir = os.environ['TMP']
+        home_dir = tempfile.gettempdir()
         model_path = os.path.join(home_dir, 'saved_models', 'next_word_model.h5')
         self.langModel = load_model(model_path)
         self.nlp = en_core_web_lg.load()
