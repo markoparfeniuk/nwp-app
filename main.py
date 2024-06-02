@@ -3,6 +3,7 @@ import random
 
 from datetime import datetime
 from flask import Flask, request, jsonify
+from flask_cors import CORS
 
 from constants import WORDS_AMOUNT_TO_RELEARN
 from services.LearnWordsService import LearnWordsService
@@ -12,6 +13,7 @@ learnWordsService = LearnWordsService()
 predictWordsService = PredictWordsService()
 
 app = Flask(__name__)
+CORS(app)
 
 
 @app.route('/predict', methods=['POST'])
