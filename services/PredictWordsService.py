@@ -46,13 +46,13 @@ class PredictWordsService:
 
     def find_synonyms(self, word, vocab, threshold=0.9):
         word_doc = self.nlp(word)
-        if word_doc[0].tag_ == 'DT' or word_doc[0].tag_ == 'PRP':
+        if word_doc[0].tag_ in {'DT', 'PRP', 'RB', 'IN', 'CC'}:
             print(word)
             return []
         synonyms = []
         for v_word in vocab:
             v_word_doc = self.nlp(v_word)
-            if (v_word_doc[0].tag_ != 'DT' or v_word_doc[0].tag_ != 'PRP') and word_doc.similarity(v_word_doc) > threshold:
+            if (v_word_doc[0].tag_ not in {'DT', 'PRP', 'RB', 'IN', 'CC'}) and word_doc.similarity(v_word_doc) > threshold:
                 synonyms.append(v_word)
         return synonyms
 
