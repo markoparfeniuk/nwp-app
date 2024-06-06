@@ -52,9 +52,12 @@ class PredictWordsService:
         synonyms = []
         for v_word in vocab:
             v_word_doc = self.nlp(v_word)
-            if (v_word_doc[0].tag_ not in {'DT', 'PRP', 'RB', 'IN', 'CC'}) and word_doc.similarity(v_word_doc) > threshold:
-                synonyms.append(v_word)
-        return synonyms
+            if (v_word_doc[0].tag_ not in {'DT', 'PRP', 'RB', 'IN', 'CC'}):
+                similarity = word_doc.similarity(v_word_doc)
+                if similarity > threshold:
+                    synonyms.append((v_word, similarity))
+        synonyms = sorted(synonyms, key=lambda x: x[1], reverse=True)[:3]
+        return [synonym[0] for synonym in synonyms]
 
     def predict_next_words_with_synonyms(self, user_id, text, n=3, threshold=0.55):
         vocabulary = self.get_user_learning_vocabulary(user_id)
