@@ -46,7 +46,7 @@ class PredictWordsService:
 
     def find_synonyms(self, word, vocab, threshold=0.9):
         word_doc = self.nlp(word)
-        exclude_tags = {'DT', 'PRP', 'RB', 'IN', 'CC', 'PRP$', 'WP', 'WP$', 'WRB'}
+        exclude_tags = {'DT', 'PRP', 'RB', 'IN', 'CC', 'WDT', 'NNP'}
 
         if word_doc[0].tag_ in exclude_tags:
             print(word)
