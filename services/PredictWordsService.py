@@ -67,6 +67,6 @@ class PredictWordsService:
 
         for word in top_words:
             synonyms = self.find_synonyms(word, vocabulary, threshold)
-            synonyms_in_vocab[word] = [] if not synonyms or word == 'statement' else synonyms
+            synonyms_in_vocab[word] = [] if not synonyms or word == 'statement' or word == 'however' else synonyms
 
         return synonyms_in_vocab
