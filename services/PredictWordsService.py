@@ -48,7 +48,7 @@ class PredictWordsService:
         word_doc = self.nlp(word)
         exclude_tags = {'DT', 'PRP', 'IN', 'CC', 'WDT', 'NNP'}
 
-        if word == 'statement' or word_doc[0].tag_ in exclude_tags:
+        if word_doc[0].tag_ in exclude_tags:
             return []
         synonyms = []
         for v_word in vocab:
@@ -67,6 +67,6 @@ class PredictWordsService:
 
         for word in top_words:
             synonyms = self.find_synonyms(word, vocabulary, threshold)
-            synonyms_in_vocab[word] = synonyms if synonyms else []
+            synonyms_in_vocab[word] = [] if not synonyms or word == 'statement' else synonyms
 
         return synonyms_in_vocab
