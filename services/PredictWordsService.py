@@ -48,7 +48,7 @@ class PredictWordsService:
         word_doc = self.nlp(word)
         exclude_tags = {'DT', 'PRP', 'IN', 'CC', 'WDT', 'NNP'}
 
-        if word is 'statement' or word_doc[0].tag_ in exclude_tags:
+        if word == 'statement' or word_doc[0].tag_ in exclude_tags:
             return []
         synonyms = []
         for v_word in vocab:
